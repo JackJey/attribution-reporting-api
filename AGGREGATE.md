@@ -1,6 +1,7 @@
 # Attribution Reporting API with Aggregatable Reports
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
+
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 **Table of Contents**
@@ -24,7 +25,7 @@
   - [More advanced contribution bounding](#more-advanced-contribution-bounding)
   - [Choosing among aggregation services](#choosing-among-aggregation-services)
 - [Considered alternatives](#considered-alternatives)
-  - [“Count” vs. “value” histograms](#count-vs-value-histograms)
+  - ["Count" vs. "value" histograms](#count-vs-value-histograms)
   - [Binary report format](#binary-report-format)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -49,7 +50,7 @@ Aggregatable attribution reports should support legitimate measurement use cases
 
 - Higher fidelity measurement of attribution-trigger (conversion-side) data, which is very limited in event-level attribution reports, including the ability to sum _values_ rather than just counts
 
-- イベントレベルのアトリビューションレポートでは非常に限られている、アトリビューショントリガー（コンバージョン側）のデータをより忠実に測定し、カウントだけでなく\_値を合計することが可能です。
+- イベントレベルのアトリビューションレポートでは非常に限られている、アトリビューショントリガー(コンバージョン側)のデータをより忠実に測定し、カウントだけでなく\_値を合計することが可能です。
 
 - A system which enables the most robust privacy protections
 
@@ -65,11 +66,11 @@ Aggregatable attribution reports should support legitimate measurement use cases
 
 - Greater flexibility to trade off attribution-trigger (conversion-side) data, reporting rate and accuracy.
 
-- アトリビューション・トリガー（コンバージョン側）データ、レポート作成率、精度をトレードオフできる柔軟性を向上。
+- アトリビューション・トリガー(コンバージョン側)データ、レポート作成率、精度をトレードオフできる柔軟性を向上。
 
 Note: fraud detection (enabling the filtration of reports you are not expecting) is a goal but it is left out of scope for this document for now.
 
-注：不正検知（想定していないレポートのフィルタリングを可能にする）は目標ではあるが、今のところこのドキュメントの範囲外としている。
+注:不正検知(想定していないレポートのフィルタリングを可能にする)は目標ではあるが、今のところこのドキュメントの範囲外としている。
 
 ## API changes
 
@@ -103,7 +104,7 @@ Registering sources eligible for aggregate reporting entails adding a new `aggre
 
 This defines a dictionary of named aggregation keys, each with a piece of the aggregation key defined as a hex-string. The final histogram bucket key will be fully defined at trigger time using a combination (binary OR) of this piece and trigger-side pieces.
 
-これは、16 進文字列として定義された集約キーの断片を持つ、名前付き集約キーの辞書を定義するものである。最終的なヒストグラムのバケットキーは、このピースとトリガー側のピースの組み合わせ（バイナリ OR）を用いて、トリガー時に完全に定義されます。
+これは、16 進文字列として定義された集約キーの断片を持つ、名前付き集約キーの辞書を定義するものである。最終的なヒストグラムのバケットキーは、このピースとトリガー側のピースの組み合わせ(バイナリ OR)を用いて、トリガー時に完全に定義されます。
 
 Final keys will be restricted to a maximum of 128 bits. This means that hex strings in the JSON must be limited to at most 32 digits.
 
@@ -157,11 +158,11 @@ Trigger registration will also add two new fields to the JSON dictionary of the 
 
 The `aggregatable_trigger_data` field is a list of dict which generates aggregation keys.
 
-aggregatable_trigger_data` フィールドは、集約キーを生成する dict のリストである。
+`aggregatable_trigger_data` フィールドは、集約キーを生成する dict のリストである。
 
-The `aggregatable_values` field lists an amount of an abstract "value" to contribute to each key, which can be integers in [1, 2^16). These are attached to aggregation keys in the order they are generated. See the [contribution budgeting](#contribution-bounding-and-budgeting) section for more details on how to allocate these contribution values.
+The `aggregatable_values` field lists an amount of an abstract "value" to contribute to each key, which can be integers in [1, 2^16). These are attached to aggregation keys in the order they are generated. See the [contribution budgeting](#contribution-bounding-and-budgeting) section for more details on how to allocate these contribution values.]()
 
-集約可能な値`フィールドは、各キーに寄与する抽象的な「値」の量をリストアップします。これは [1, 2^16) の整数値です。これらは生成された順番に集約キーに付けられます。これらの貢献度の割り当て方法の詳細については、[貢献度予算](#contribution-bounding and-budgeting) のセクションを参照してください。
+`集約可能な値`フィールドは、各キーに寄与する抽象的な「値」の量をリストアップします。これは [1, 2^16) の整数値です。これらは生成された順番に集約キーに付けられます。これらの貢献度の割り当て方法の詳細については、[貢献度予算](#contribution-bounding and-budgeting) のセクションを参照してください。]()
 
 The scheme above will generate the following abstract histogram contributions:
 
@@ -188,7 +189,7 @@ Note: The `filters` field will still apply to aggregatable reports, and each dic
 
 Note: the above scheme was used to maximize the [contribution budget](#contribution-bounding-and-budgeting) and optimize utility in the face of constant noise. To rescale, simply inverse the scaling factors used above:
 
-注：上記のスキームは、[貢献予算](#contribution-bounding and-budgeting) を最大化し、一定のノイズに直面した場合の効用を最適化するために使用されたものです。再スケールするには、上記で使用したスケーリングファクターを単純に反転させる。
+注:上記のスキームは、[貢献予算](#contribution-bounding and-budgeting) を最大化し、一定のノイズに直面した場合の効用を最適化するために使用されたものです。再スケールするには、上記で使用したスケーリングファクターを単純に反転させる。
 
 ```python
 L1 = 1 << 16
@@ -246,19 +247,19 @@ Reports will not be delayed to the same extent as they are for event level repor
 
 - The `shared_info` will be a serialized JSON object. This exact string is used as authenticated data for decryption, see [below](#encrypted-payload). The string therefore must be forwarded to the aggregation service unmodified. The reporting origin can parse the string to access the encoded fields.
 
-- shared_info`はシリアライズされた JSON オブジェクトになります。この正確な文字列は、復号化のための認証データとして使用されます（[下記](#encrypted-payload)を参照）。したがって、この文字列は修正されないままアグリゲーションサービスに転送される必要があります。報告元は、文字列を解析して、エンコードされたフィールドにアクセスすることができます。
+- `shared_info`はシリアライズされた JSON オブジェクトになります。この正確な文字列は、復号化のための認証データとして使用されます([下記](#encrypted-payload)を参照)。したがって、この文字列は修正されないままアグリゲーションサービスに転送される必要があります。報告元は、文字列を解析して、エンコードされたフィールドにアクセスすることができます。
 
 - The `api` field is a string enum identifying the API that triggered the report. This allows the aggregation service to extend support to other APIs in the future.
 
-- api` フィールドは、レポートのトリガーとなった API を特定するための文字列列列挙型である。これにより、将来的にアグリゲーションサービスが他の API にサポートを拡張することができる。
+- `api` フィールドは、レポートのトリガーとなった API を特定するための文字列列列挙型である。これにより、将来的にアグリゲーションサービスが他の API にサポートを拡張することができる。
 
 - The `scheduled_report_time` will be the number of seconds since the Unix Epoch (1970-01-01T00:00:00Z, ignoring leap seconds) to align with [DOMTimestamp](https://heycam.github.io/webidl/#DOMTimeStamp) until the browser initially scheduled the report to be sent (to avoid noise around offline devices reporting late).
 
-- scheduled_report_time` は、ブラウザが最初にレポートを送信するようにスケジュールするまでの、Unix Epoch (1970-01-01T00:00:00Z, うるう秒は無視) から [DOMTimestamp](https://heycam.github.io/webidl/#DOMTimeStamp) に合わせた秒数です (オフラインデバイスからの遅いレポートによるノイズを回避するため).
+- `scheduled_report_time` は、ブラウザが最初にレポートを送信するようにスケジュールするまでの、Unix Epoch (1970-01-01T00:00:00Z, うるう秒は無視) から [DOMTimestamp](https://heycam.github.io/webidl/#DOMTimeStamp) に合わせた秒数です (オフラインデバイスからの遅いレポートによるノイズを回避するため).
 
 - The `source_registration_time` will represent (in seconds since the Unix Epoch) the time the source event was registered, rounded down to a whole day.
 
-- source_registration_time` はソースイベントが登録された時刻を (Unix Epoch からの秒数で) 表し、丸一日に切り捨てた値となります。
+- `source_registration_time` はソースイベントが登録された時刻を (Unix Epoch からの秒数で) 表し、丸一日に切り捨てた値となります。
 
 - The `payload` will contain the actual histogram contributions. It should be be encrypted and then base64 encoded, see [below](#encrypted-payload).
 
@@ -293,12 +294,13 @@ This encryption should use [AEAD](https://en.wikipedia.org/wiki/Authenticated_en
 
 この暗号化には [AEAD](https://en.wikipedia.org/wiki/Authenticated_encryption) を使用し、`shared_info` の情報が改竄されないようにする必要があります。なぜなら、アグリゲーションサービスは適切なリプレイ保護を行うために、その情報を必要とするためです。認証されたデータは `shared_info` の文字列 (UTF-8 でエンコードされる) に、ドメイン分離のために一定のプレフィックスを付加したもので、公開鍵を共有していても異なるプロトコルで暗号文が再利用されないようにする。
 
-The encryption will use public keys specified by the aggregation service. The browser will encrypt payloads just before the report is sent by fetching the public key endpoint with an un-credentialed request. The processing origin will respond with a set of keys which will be stored according to standard HTTP caching rules, i.e. using Cache-Control headers to dictate how long to store the keys for (e.g. following the [freshness lifetime](https://datatracker.ietf.org/doc/html/
+The encryption will use public keys specified by the aggregation service. The browser will encrypt payloads just before the report is sent by fetching the public key endpoint with an un-credentialed request. The processing origin will respond with a set of keys which will be stored according to standard HTTP caching rules, i.e. using Cache-Control headers to dictate how long to store the keys for (e.g. following the [freshness lifetime](https://datatracker.ietf.org/doc/html/)
 
 この暗号化には [AEAD](https://en.wikipedia.org/wiki/Authenticated_encryption) を使用し、`shared_info` の情報が改竄されないようにする必要があります。なぜなら、アグリゲーションサービスは適切なリプレイ保護を行うために、その情報を必要とするためです。認証されたデータは `shared_info` の文字列 (UTF-8 でエンコードされる) に、ドメイン分離のために一定のプレフィックスを付加したもので、公開鍵を共有していても異なるプロトコルで暗号文が再利用されないようにする。
+
 rfc7234#section-4.2)). The browser could enforce maximum/minimum lifetimes of stored keys to encourage faster key rotation and/or mitigate bandwidth usage. The scheme of the JSON encoded public keys is as follows:
 
-暗号化には、アグリゲーションサービスによって指定された公開鍵が使用されます。ブラウザは、レポートが送信される直前に、認証されていないリクエストで公開鍵のエンドポイントを取得することにより、ペイロードを暗号化します。つまり、Cache-Control ヘッダを使用して、鍵をどれくらいの期間保存するかを指定します（たとえば [freshness lifetime](https://datatracker.ietf.org/doc/html/rfc7234#section-4.2) に従います）。ブラウザは、保存される鍵の最大/最小寿命を強制することで、鍵のローテーションの 高速化を促進したり、帯域幅の使用を軽減したりすることができる。JSON 暗号化された公開鍵のスキームは以下のとおりである。
+暗号化には、アグリゲーションサービスによって指定された公開鍵が使用されます。ブラウザは、レポートが送信される直前に、認証されていないリクエストで公開鍵のエンドポイントを取得することにより、ペイロードを暗号化します。つまり、Cache-Control ヘッダを使用して、鍵をどれくらいの期間保存するかを指定します(たとえば [freshness lifetime](https://datatracker.ietf.org/doc/html/rfc7234#section-4.2) に従います)。ブラウザは、保存される鍵の最大/最小寿命を強制することで、鍵のローテーションの 高速化を促進したり、帯域幅の使用を軽減したりすることができる。JSON 暗号化された公開鍵のスキームは以下のとおりである。
 
 ```jsonc
 {
@@ -314,17 +316,17 @@ rfc7234#section-4.2)). The browser could enforce maximum/minimum lifetimes of st
 
 To limit the impact of a single compromised key, multiple keys (up to a small limit) can be provided. The browser should independently pick a key uniformly at random for each payload it encrypts to avoid associating different reports. Additionally, a public key endpoint should not reuse an ID string for a different key. In particular, IDs must be unique within a single response to be valid. In the case of backwards incompatible changes to this scheme (e.g. in future versions of the API), the endpoint URL should also change.
 
-単一の漏洩鍵の影響を制限するために、複数の鍵を提供することができる（小さな制限まで）。ブラウザは、異なるレポートを関連付けることを避けるために、暗号化する各ペイロードに対して、独自に一様にランダムに鍵を選ぶべきです。さらに、公開鍵のエンドポイントは、異なる鍵のために ID 文字列を再利用してはならない。特に、ID は 1 つのレスポンス内で一意でなければ有効とはならない。このスキームに対して後方互換性のない変更が行われた場合 (たとえば、API の将来のバージョン)、エンドポイント URL も変更される必要があります。
+単一の漏洩鍵の影響を制限するために、複数の鍵を提供することができる(小さな制限まで)。ブラウザは、異なるレポートを関連付けることを避けるために、暗号化する各ペイロードに対して、独自に一様にランダムに鍵を選ぶべきです。さらに、公開鍵のエンドポイントは、異なる鍵のために ID 文字列を再利用してはならない。特に、ID は 1 つのレスポンス内で一意でなければ有効とはならない。このスキームに対して後方互換性のない変更が行われた場合 (たとえば、API の将来のバージョン)、エンドポイント URL も変更される必要があります。
 
 **Note:** The browser may need some mechanism to ensure that the same set of keys are delivered to different users.
 
-**注：**ブラウザは、同じ鍵のセットが異なるユーザーに配信されることを保証するために、何らかのメカニズムが必要かもしれません。
+**注:**ブラウザは、同じ鍵のセットが異なるユーザーに配信されることを保証するために、何らかのメカニズムが必要かもしれません。
 
 #### Optional: extended debugging reports
 
 If [debugging](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#optional-extended-debugging-reports) is enabled, additional debug fields will be present in aggregatable reports. The `source_debug_key` and `trigger_debug_key` fields match those in the event-level reports. If both the source and trigger debug keys are set, there will be a `debug_cleartext_payload` field included in the report. It will contain the base64-encoded cleartext of the encrypted payload to allow downstream systems to verify that reports are constructed correctly. If both debug keys are set, the `shared_info` will also include the flag `"debug_mode": "enabled"` to allow the aggregation service to support debugging functionality on these reports.
 
-debugging](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#optional-extended-debugging-reports) が有効な場合、集約可能なレポートに追加のデバッグフィールドが表示されます。source_debug_key`と`trigger_debug_key`フィールドはイベントレベルのレポートにあるものと同じです。ソースデバッグキーとトリガーデバッグキーの両方が設定されている場合、レポートに`debug_cleartext_payload` フィールドが含まれます。これは、レポートが正しく構築されていることを下流のシステムが検証できるように、暗号化されたペイロードのbase64エンコードされた平文が含まれます。両方のデバッグキーが設定されている場合、`shared_info`にはフラグ`"debug_mode":「これは、アグリゲーションサービスがこれらのレポートのデバッグ機能をサポートできるようにするためである。
+[debugging](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#optional-extended-debugging-reports) が有効な場合、集約可能なレポートに追加のデバッグフィールドが表示されます。`source_debug_key`と`trigger_debug_key`フィールドはイベントレベルのレポートにあるものと同じです。ソースデバッグキーとトリガーデバッグキーの両方が設定されている場合、レポートに`debug_cleartext_payload` フィールドが含まれます。これは、レポートが正しく構築されていることを下流のシステムが検証できるように、暗号化されたペイロードの base64 エンコードされた平文が含まれます。両方のデバッグキーが設定されている場合、`shared_info`にはフラグ`"debug_mode":"enabled"`これは、アグリゲーションサービスがこれらのレポートのデバッグ機能をサポートできるようにするためである。
 
 Additionally, a duplicate debug report will be sent immediately (i.e. without the random delay) to a `.well-known/attribution-reporting/debug/report-aggregate-attribution` endpoint. The debug reports should be almost identical to the normal reports, including the additional debug fields. However, the `payload` ciphertext will differ due to repeating the encryption operation and the `key_id` may differ if the previous key had since expired or the browser randomly chose a different valid public key.
 
@@ -338,7 +340,7 @@ Each attribution can make multiple contributions to an underlying aggregate hist
 
 This bound is characterized by a single parameters: `L1`, the maximum sum of the contributions (values) across all buckets for a given source event. L1 refers to the L1 sensitivity / norm of the histogram contributions per source event.
 
-この境界は一つのパラメータで特徴付けられる。L1` は、任意のソース・イベントに対するすべてのバケット間の寄与（値）の最大合計です。L1 とは、ソース・イベントごとのヒストグラム寄与の L1 感度/ノルムを指します。
+この境界は一つのパラメータで特徴付けられる。 `L1` は、任意のソース・イベントに対するすべてのバケット間の寄与(値)の最大合計です。L1 とは、ソース・イベントごとのヒストグラム寄与の L1 感度/ノルムを指します。
 
 Exceeding these limits will cause future contributions to silently drop. While exposing failure in any kind of error interface can be used to leak sensitive information, we might be able to reveal aggregate failure results via some other monitoring side channel in the future.
 
@@ -358,7 +360,7 @@ Strawman: There should be a limit of 1024 pending aggregatable reports per desti
 
 Note: The storage limits for event-level and aggregatable reports are enforced independently of each other.
 
-注：イベントレベルおよびアグリゲーションレポートの保存制限は、互いに独立して実施されます。
+注:イベントレベルおよびアグリゲーションレポートの保存制限は、互いに独立して実施されます。
 
 ## Data processing through a Secure Aggregation Service
 
@@ -371,6 +373,7 @@ As the browser sends individual aggregatable reports to the reporting origin, th
 The aggregation service will aggregate reports within a certain batch, and respond back with an aggregate histogram, i.e. a list of keys with associated _aggregate_ values. It is expected that as a privacy protection mechanism, a certain amount of noise will be a
 
 ブラウザが個々の集約可能なレポートをレポート元に送信すると、レポート元はそれらを[バッチ](AGGREGATION_SERVICE_TEE.md#disjoint-batches)に整理する。これらのバッチは、レポートに指定されたアグリゲーションサービス `origin` に送信することができます。
+
 dded to each output key's aggregate value.
 
 集約サービスは、特定のバッチ内のレポートを集約し、集約ヒストグラム、 すなわち、関連する「集約値」を持つキーのリストで応答する。プライバシー保護の仕組みとして、各出力キーの集計値にある程度のノイズを加えることが期待される。
@@ -383,11 +386,11 @@ This proposal introduces a new set of reports to the API. Alone they do not add 
 
 These histograms should be protected with various techniques with a trusted server system. For example, it is expected that the histograms will be subject to noise proportional to the `L1` budget. Additionally, most rate-limits (except for the maximum number of reports per source) used for event-level reports will also be enforced for aggregatable reports, which limit the total amount of information that can be sent out for any one user.
 
-これらのヒストグラムは、信頼できるサーバシステムで様々な手法で保護されるべきである。例えば、ヒストグラムは `L1` 予算に比例したノイズにさらされることが予想されます。さらに、イベントレベルのレポートに使用されるほとんどのレート制限（ソースごとのレポートの最大数を除く）は、任意の 1 ユーザーについて送信できる情報の総量を制限する集約可能なレポートに対しても適用されます。
+これらのヒストグラムは、信頼できるサーバシステムで様々な手法で保護されるべきである。例えば、ヒストグラムは `L1` 予算に比例したノイズにさらされることが予想されます。さらに、イベントレベルのレポートに使用されるほとんどのレート制限(ソースごとのレポートの最大数を除く)は、任意の 1 ユーザーについて送信できる情報の総量を制限する集約可能なレポートに対しても適用されます。
 
 Servers will need to be implemented such that browsers can trust them with sensitive cross-site data. There are various technologies and techniques that could be employed (e.g. [Trusted Execution Environments](https://en.wikipedia.org/wiki/Trusted_execution_environment), [Multi-party-computation](https://en.wikipedia.org/wiki/Secure_multi-party_computation), audits, etc) that could satisfy browsers that data is safely aggregated and the output maintains proper privacy.
 
-サーバーは、ブラウザが機密性の高いクロスサイトデータを扱う際に信頼できるような実装が必要です。データが安全に集約され、出力が適切なプライバシーを維持することをブラウザに納得させるために、様々な技術やテクニック（[Trusted Execution Environments](https://en.wikipedia.org/wiki/Trusted_execution_environment), [Multi-party-computation](https://en.wikipedia.org/wiki/Secure_multi-party_computation), 監査など）が採用される可能性がある。
+サーバーは、ブラウザが機密性の高いクロスサイトデータを扱う際に信頼できるような実装が必要です。データが安全に集約され、出力が適切なプライバシーを維持することをブラウザに納得させるために、様々な技術やテクニック([Trusted Execution Environments](https://en.wikipedia.org/wiki/Trusted_execution_environment), [Multi-party-computation](https://en.wikipedia.org/wiki/Secure_multi-party_computation), 監査など)が採用される可能性がある。
 
 ### Differential Privacy
 
@@ -397,7 +400,7 @@ A goal of this work is to have a framework which can support differentially priv
 
 Note: there are a few caveats about a formal differential privacy claim:
 
-注：形式的な差分プライバシー要求については、いくつかの注意点があります。
+注:形式的な差分プライバシー要求については、いくつかの注意点があります。
 
 - In the current design, the number of encrypted reports is revealed to the reporting origin in the clear without any noise. See [Hide the true number of attribution reports](#Hide the-true-number-of-attribution-reports).
 
@@ -424,13 +427,13 @@ Various rate limits outlined in the [event-level explainer](https://github.com/W
 
 ### Worklet-based aggregation key generation
 
-At trigger time, we could have a [worklet-style](https://developer.mozilla.org/en-US/docs/Web/API/Worklet) API that allows passing in an arbitrary string of “trigger context” that specifies information about the trigger event (e.g. high fidelity data about a conversion). From within the worklet, code can access both the source and trigger context in the same function to generate an aggregate report. This allows for more dynamic keys than a declarative API (like the existing[ HTTP-based triggering](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#triggering-attribution)), but disallows exfiltrating sensitive cross-site data out of the worklet.
+At trigger time, we could have a [worklet-style](https://developer.mozilla.org/en-US/docs/Web/API/Worklet) API that allows passing in an arbitrary string of "trigger context" that specifies information about the trigger event (e.g. high fidelity data about a conversion). From within the worklet, code can access both the source and trigger context in the same function to generate an aggregate report. This allows for more dynamic keys than a declarative API (like the existing [HTTP-based triggering](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#triggering-attribution)), but disallows exfiltrating sensitive cross-site data out of the worklet.
 
-トリガー時に、トリガーイベントに関する情報（例えば、変換に関する高忠実度データ）を指定する 「トリガーコンテキスト」の任意の文字列を渡すことができる[ワークレットスタイル](https://developer.mozilla.org/en-US/docs/Web/API/Worklet) API を持つことができる。小作業負荷の中から、コードは同じ関数でソースとトリガー コンテキストの両方にアクセスし、集約レポートを生成することができます。これは、既存の[ HTTP-based triggering ](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#triggering-attribution)のような宣言的な API よりも動的なキーを可能にしますが、機密性の高いクロスサイトデータを小作品から流出させることを禁止しています。
+トリガー時に、トリガーイベントに関する情報(例えば、変換に関する高忠実度データ)を指定する 「トリガーコンテキスト」の任意の文字列を渡すことができる[ワークレットスタイル](https://developer.mozilla.org/en-US/docs/Web/API/Worklet) API を持つことができる。小作業負荷の中から、コードは同じ関数でソースとトリガー コンテキストの両方にアクセスし、集約レポートを生成することができます。これは、既存の [HTTP-based triggering](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#triggering-attribution)のような宣言的な API よりも動的なキーを可能にしますが、機密性の高いクロスサイトデータを小作品から流出させることを禁止しています。
 
 The worklet is used to generate histogram contributions, which are key-value pairs of integers. Note that there will be some maximum number of keys (e.g. 2^128 keys).
 
-このワークレットは、ヒストグラムの寄与を生成するために使用され、整数のキーと値のペアになります。キーの最大数があることに注意してください（例えば 2^128 キー）。
+このワークレットは、ヒストグラムの寄与を生成するために使用され、整数のキーと値のペアになります。キーの最大数があることに注意してください(例えば 2^128 キー)。
 
 The following code triggers attribution by invoking a worklet.
 
@@ -482,11 +485,11 @@ registerAggregateReporter(
 
 This worklet approach provides greatly enhanced flexibility at the cost of complexity. It introduces a new security / privacy boundary, and there are several edge cases that must be handled carefully to avoid data loss (e.g. the document being destroyed while the worklet is processing, unless a `keepalive`-style mode for worklets is introduced). These issues must be solved before this design could be considered.
 
-この小作業負荷のアプローチは、複雑さの代償として、非常に強化された柔軟性を提供する。また、新しいセキュリティとプライバシーの境界が導入され、データ損失を避けるために注意深く扱わなければならないいくつかのエッジケースがあります（例えば、小作品用の「keepalive」スタイルのモードが導入されない限り、小作品の処理中に文書が破壊される）。これらの問題は、この設計が検討される前に解決されなければならない。
+この小作業負荷のアプローチは、複雑さの代償として、非常に強化された柔軟性を提供する。また、新しいセキュリティとプライバシーの境界が導入され、データ損失を避けるために注意深く扱わなければならないいくつかのエッジケースがあります(例えば、小作品用の「keepalive」スタイルのモードが導入されない限り、小作品の処理中に文書が破壊される)。これらの問題は、この設計が検討される前に解決されなければならない。
 
 ### Custom attribution models
 
-The worklet based scheme possibly allows for more flexible attribution options, including specifying partial “credit” for multiple previous attribution sources that would provide value to advertisers that are interested in attribution models other than last-touch.
+The worklet based scheme possibly allows for more flexible attribution options, including specifying partial "credit" for multiple previous attribution sources that would provide value to advertisers that are interested in attribution models other than last-touch.
 
 ワークレットベースのスキームでは、より柔軟なアトリビューションオプションが可能で、複数の過去のアトリビューションソースに対する部分的な「クレジット」を指定することもでき、ラストタッチ以外のアトリビューションモデルに関心を持つ広告主にとって価値を提供できる可能性があります。
 
@@ -496,7 +499,7 @@ We should be careful in allowing reports to include cross site information from 
 
 The presence or absence of an attribution report leaks some potentially sensitive cross-site data in the current design. Therefore, revealing the total count of reports to the reporting origin could leak something sensitive as well (imagine if the reporting origin only ever registered a conversion or impression for a single user).
 
-現在のデザインでは、アトリビューション レポートの有無によって、潜在的に機密性の高いクロスサイトデータが漏れる可能性があります。したがって、レポートの総数をレポート元に公開すると、何か機密情報が漏れる可能性があります（レポート元が 1 人のユーザーのコンバージョンまたはインプレッションしか登録しなかった場合を想像してください）。
+現在のデザインでは、アトリビューション レポートの有無によって、潜在的に機密性の高いクロスサイトデータが漏れる可能性があります。したがって、レポートの総数をレポート元に公開すると、何か機密情報が漏れる可能性があります(レポート元が 1 人のユーザーのコンバージョンまたはインプレッションしか登録しなかった場合を想像してください)。
 
 To hide the true number of reports, we could:
 
@@ -504,7 +507,7 @@ To hide the true number of reports, we could:
 
 - Unconditionally send a null report for every registered attribution trigger (thus making the count a function of only destination-side information)
 
-- 登録されたアトリビューショントリガーごとに無条件に NULL レポートを送信する（したがって、カウントを送信先側の情報のみの関数にする）。
+- 登録されたアトリビューショントリガーごとに無条件に NULL レポートを送信する(したがって、カウントを送信先側の情報のみの関数にする)。
 
 - Add noise to the number of reports by having some clients randomly add noisy null reports. This technique would have to assume some threshold number of unattributed triggers to maintain privacy.
 
@@ -522,7 +525,7 @@ This would likely come at the cost of some utility and complexity, as budgeting 
 
 Additionally, there are more sophisticated techniques that can optimize utility and privacy if we bound more than just the L1 norm of the aggregate histogram. For instance, we could impose a stricter Linf bound (i.e. bounding the contribution to any one bucket). Care should be taken to ensure that either:
 
-さらに、集約されたヒストグラムの L1 ノルム以上のものを束縛すれば、実用性とプライバシーを最適化できる、より洗練された技術もある。例えば、より厳格な Linf 境界（すなわち、任意の 1 つのバケットへの寄与を制限する）を課すことができる。のいずれかを確保するように注意する必要がある。
+さらに、集約されたヒストグラムの L1 ノルム以上のものを束縛すれば、実用性とプライバシーを最適化できる、より洗練された技術もある。例えば、より厳格な Linf 境界(すなわち、任意の 1 つのバケットへの寄与を制限する)を課すことができる。のいずれかを確保するように注意する必要がある。
 
 - A proper compromise is met across various use-cases
 
@@ -548,25 +551,25 @@ Attribution-Reporting-Register-Source: {..., "aggregation_keys": ..., "alternati
 
 The optional field will allow developers to choose among different options for aggregation infrastructure supported by the user agent. This value will allow experimentation with new technologies, and allows us to try out new approaches without interfering with core functionality provided by the default option. The `"experimental-poplar"` option will implement a protocol similar to [poplar VDAF](https://github.com/cfrg/draft-irtf-cfrg-vdaf/blob/main/draft-irtf-cfrg-vdaf.md#poplar1-poplar1) in the [PPM Framework](https://datatracker.ietf.org/doc/draft-gpew-priv-ppm/).
 
-このオプションフィールドは，開発者が，ユーザエージェントがサポートする集約基盤のための異なるオプションの中から選択することを可能にする。この値によって新しい技術の実験が可能になり、デフォルトのオプションで提供されるコア機能に干渉することなく、新しいアプローチを試すことができるようになります。experimental-poplar"` オプションは [PPM Framework](https://datatracker.ietf.org/doc/draft-gpew-priv-ppm/) の [poplar VDAF](https://github.com/cfrg/draft-irtf-cfrg-vdaf/blob/main/draft-irtf-cfrg-vdaf.md#poplar1-poplar1) に似たプロトコルを実装する予定です。
+このオプションフィールドは，開発者が，ユーザエージェントがサポートする集約基盤のための異なるオプションの中から選択することを可能にする。この値によって新しい技術の実験が可能になり、デフォルトのオプションで提供されるコア機能に干渉することなく、新しいアプローチを試すことができるようになります。 `"experimental-poplar"` オプションは [PPM Framework](https://datatracker.ietf.org/doc/draft-gpew-priv-ppm/) の [poplar VDAF](https://github.com/cfrg/draft-irtf-cfrg-vdaf/blob/main/draft-irtf-cfrg-vdaf.md#poplar1-poplar1) に似たプロトコルを実装する予定です。
 
 ## Considered alternatives
 
-### “Count” vs. “value” histograms
+### "Count" vs. "value" histograms
 
 There are some use-cases which require something close to binary input (i.e. counting conversions), and other conversions which require summing in some discretized domain (e.g. summing conversion value).
 
-バイナリ入力に近いものを必要とするユースケース（すなわち計数変換）と，離散化された領域での合計を必要とする変換（例えば変換値の合計）がある。
+バイナリ入力に近いものを必要とするユースケース(すなわち計数変換)と，離散化された領域での合計を必要とする変換(例えば変換値の合計)がある。
 
 For simplicity in this API we are treating these exactly the same. Count-based approaches could do something like submitting two possible values, 0 for 0 and MAX_VALUE for 1, and consider the large space to be just a discretized domain of fractions between 0 and 1.
 
 この API では簡略化のため、これらを全く同じに扱っている。カウントベースのアプローチでは、0 には 0、1 には MAX_VALUE という 2 つの可能な値を提出し、大きな空間は 0 と 1 の間の端数の離散化されたドメインだけであると考えるようなことができる。
 
-This has the benefit of keeping the aggregation infrastructure generic and avoids the need to “tag” different reports with whether they represent a coarse-grained or fine-grained value.
+This has the benefit of keeping the aggregation infrastructure generic and avoids the need to "tag" different reports with whether they represent a coarse-grained or fine-grained value.
 
 これは、アグリゲーションインフラストラクチャを汎用的に維持し、異なるレポートが粗視化された値か細粒化された値かを示す「タグ」の必要性を回避する利点がある。
 
-In the end, we will use this MAX_VALUE to scale noise via computing the sensitivity of the computation, so submitting “1” for counts will yield more noise than otherwise expected.
+In the end, we will use this MAX_VALUE to scale noise via computing the sensitivity of the computation, so submitting "1" for counts will yield more noise than otherwise expected.
 
 最終的には、この MAX_VALUE を使って、計算の感度を計算してノイズをスケーリングすることになるので、counts に "1" を指定すると、他の予想よりもノイズが多くなる。
 
