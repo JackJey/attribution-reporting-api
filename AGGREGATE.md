@@ -49,28 +49,19 @@ Aggregatable attribution reports should support legitimate measurement use cases
 集計可能なアトリビューションレポートは、イベントレベルレポートで既にサポートされていない正当な測定ユースケースをサポートする必要があります。これには以下が含まれる。
 
 - Higher fidelity measurement of attribution-trigger (conversion-side) data, which is very limited in event-level attribution reports, including the ability to sum _values_ rather than just counts
-
-- イベントレベルのアトリビューションレポートでは非常に限られている、アトリビューショントリガー(コンバージョン側)のデータをより忠実に測定し、カウントだけでなく\_値を合計することが可能です。
-
+  - イベントレベルのアトリビューションレポートでは非常に限られている、アトリビューショントリガー(コンバージョン側)のデータをより忠実に測定し、カウントだけでなく\_値を合計することが可能です。
 - A system which enables the most robust privacy protections
-
-- 最も強固なプライバシー保護を可能にするシステム
-
+  - 最も強固なプライバシー保護を可能にするシステム
 - Ability to receive aggregatable reports alongside event-level reports
-
-- イベントレベルのレポートと同時に、集計可能なレポートを受け取ることができます。
-
+  - イベントレベルのレポートと同時に、集計可能なレポートを受け取ることができます。
 - Ability to receive data at a faster rate than with event-level reports
-
-- イベントレベルのレポートに比べ、高速にデータを受信することが可能
-
+  - イベントレベルのレポートに比べ、高速にデータを受信することが可能
 - Greater flexibility to trade off attribution-trigger (conversion-side) data, reporting rate and accuracy.
-
-- アトリビューション・トリガー(コンバージョン側)データ、レポート作成率、精度をトレードオフできる柔軟性を向上。
+  - アトリビューション・トリガー(コンバージョン側)データ、レポート作成率、精度をトレードオフできる柔軟性を向上。
 
 Note: fraud detection (enabling the filtration of reports you are not expecting) is a goal but it is left out of scope for this document for now.
 
-注:不正検知(想定していないレポートのフィルタリングを可能にする)は目標ではあるが、今のところこのドキュメントの範囲外としている。
+注: 不正検知(想定していないレポートのフィルタリングを可能にする)は目標ではあるが、今のところこのドキュメントの範囲外としている。
 
 ## API changes
 
@@ -87,16 +78,17 @@ Registering sources eligible for aggregate reporting entails adding a new `aggre
 
 集約報告の対象となるソースを登録するには、[`Attribution-Reporting-Register-Source` ヘッダー](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#registering-attribution-sources) の JSON 辞書に新しい `aggregation_keys` 辞書フィールドを追加する必要があります。
 
-```jsonc
+```js
 {
   ... // existing fields, such as `source_event_id` and `destination`
 
   "aggregation_keys": {
-    // Generates a "0x159" key piece (low order bits of the key) for the key named
-    // "campaignCounts".
+    // Generates a "0x159" key piece (low order bits of the key) for the key named "campaignCounts".
+    // "campaignCounts "という名前のキーに対して、"0x159 "のキーピース（キーの低次ビット）を生成する。
     "campaignCounts": "0x159", // User saw ad from campaign 345 (out of 511)
 
     // Generates a "0x5" key piece (low order bits of the key) for the key named "geoValue".
+    // "geoValue "という名前のキーに対して、"0x5 "のキーピース（キーの低次ビット）を生成する。
     "geoValue": "0x5" // Source-side geo region = 5 (US), out of a possible ~100 regions
   }
 }
@@ -116,34 +108,41 @@ Trigger registration will also add two new fields to the JSON dictionary of the 
 
 また、トリガー登録により、[`Attribution-Reporting-Register-Trigger` ヘッダー](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#triggering-attribution) の JSON 辞書に 2 つの新しいフィールドが追加されます。
 
-```jsonc
+```js
 {
   ... // existing fields, such as `event_trigger_data`
 
   "aggregatable_trigger_data": [
     // Each dict independently adds pieces to multiple source keys.
+    // 各 dict は独立して複数のソースキーにピースを追加します。
+
     {
       // Conversion type purchase = 2 at a 9 bit offset, i.e. 2 << 9.
-      // A 9 bit offset is needed because there are 511 possible campaigns, which
-      // will take up 9 bits in the resulting key.
+      // Conversion type purchase ＝ 2，9 ビットオフセッつまり (2 << 9)
+      // A 9 bit offset is needed because there are 511 possible campaigns, which will take up 9 bits in the resulting key.
+      // キャンペーンは 511 種類あり、結果の鍵の 9 ビットを占有するため、 9 ビットのオフセットが必要である。
       "key_piece": "0x400",
       // Apply this key piece to:
+      // このキーピースを付与する
       "source_keys": ["campaignCounts"]
     },
     {
       // Purchase category shirts = 21 at a 7 bit offset, i.e. 21 << 7.
-      // A 7 bit offset is needed because there are ~100 regions for the geo key,
-      // which will take up 7 bits of space in the resulting key.
+      // 購入カテゴリとして シャツ＝21 を 7 ビットオフセット (21 << 7)
+      // A 7 bit offset is needed because there are ~100 regions for the geo key, which will take up 7 bits of space in the resulting key.
+      // 7 ビットのオフセットが必要なのは、 geo キーには 100 近い地域があり、結果のキーに 7 ビットのスペースを取るため
       "key_piece": "0xA80",
       // Apply this key piece to:
       "source_keys": ["geoValue", "nonMatchingKeyIdsAreIgnored"]
     }
   ],
   "aggregatable_values": {
-    // Each source event can contribute a maximum of L1 = 2^16 to the aggregate
-    // histogram. In this example, use this whole budget on a single trigger,
-    // evenly allocating this "budget" across two measurements. Note that this
-    // will require rescaling when post-processing aggregates!
+    // Each source event can contribute a maximum of L1 = 2^16 to the aggregate histogram.
+    // 各ソースイベントは，最大で L1 = 2^16 まで aggregate histogram に寄与することができます．
+    // In this example, use this whole budget on a single trigger, evenly allocating this "budget" across two measurements.
+    // この例では、バジェット全体を 1 つのトリガーに使用し、 2 つの測定にこの "budget" を均等に割り当てます。
+    // Note that this will require rescaling when post-processing aggregates!
+    // 集計の後処理で再スケーリングが必要になることに注意!
 
     // 1 count =  L1 / 2 = 2^15
     "campaignCounts": 32768,
@@ -168,19 +167,19 @@ The scheme above will generate the following abstract histogram contributions:
 
 上記の方式では、以下のような抽象的なヒストグラムの投稿が生成されます。
 
-```jsonc
+```js
 [
   // campaignCounts
   {
-    "key": 0x559, // = 0x159 | 0x400
-    "value": 32768
+    key: 0x559, // = 0x159 | 0x400
+    value: 32768,
   },
   // geoValue:
   {
-    "key": 0xa85, // = 0x5 | 0xA80
-    "value": 1664
-  }
-]
+    key: 0xa85, // = 0x5 | 0xA80
+    value: 1664,
+  },
+];
 ```
 
 Note: The `filters` field will still apply to aggregatable reports, and each dict in `aggregatable_trigger_data` can still optionally have filters applied to it just like for event-level reports.
@@ -191,10 +190,10 @@ Note: the above scheme was used to maximize the [contribution budget](#contribut
 
 注:上記のスキームは、[貢献予算](#contribution-bounding and-budgeting) を最大化し、一定のノイズに直面した場合の効用を最適化するために使用されたものです。再スケールするには、上記で使用したスケーリングファクターを単純に反転させる。
 
-```python
-L1 = 1 << 16
-true_agg_campaign_counts = raw_agg_campaign_counts / (L1 / 2)
-true_agg_geo_value = 1024 * raw_agg_geo_value / (L1 / 2)
+```py
+L1 = 1 << 16;
+true_agg_campaign_counts = raw_agg_campaign_counts / (L1 / 2);
+true_agg_geo_value = (1024 * raw_agg_geo_value) / (L1 / 2);
 ```
 
 Note that aggregatable trigger registration is independent of event-level trigger registration.
@@ -215,15 +214,22 @@ The report will be JSON encoded with the following scheme:
 
 報告書は以下のスキームで JSON エンコードされたものになります。
 
-```jsonc
+```js
 {
-  // Info that the aggregation services also need encoded in JSON
-  // for use with AEAD.
-  "shared_info": "{\"api\":\"attribution-reporting\",\"attribution_destination\":\"https://advertiser.example\",\"report_id\":\"[UUID]\",\"reporting_origin\":\"https://reporter.example\",\"scheduled_report_time\":\"[timestamp in seconds]\",\"source_registration_time\":\"[timestamp in seconds]\",\"version\":\"[api version]\"}",
+  // Info that the aggregation services also need encoded in JSON for use with AEAD.
+  // AEAD で使用するために、アグリゲーションサービスも JSON でエンコードする
+  "shared_info": "{
+    \"api\": \"attribution-reporting\",
+    \"attribution_destination\": \"https://advertiser.example\",
+    \"report_id\": \"[UUID]\",
+    \"reporting_origin\": \"https://reporter.example\",
+    \"scheduled_report_time\": \"[timestamp in seconds]\",
+    \"source_registration_time\": \"[timestamp in seconds]\",
+    \"version\": \"[api version]\"
+  }",
 
-  // Support a list of payloads for future extensibility if multiple helpers
-  // are necessary. Currently only supports a single helper configured
-  // by the browser.
+  // Support a list of payloads for future extensibility if multiple helpers are necessary. Currently only supports a single helper configured by the browser.
+  // 将来の拡張性のために複数のペイロードリストをサポートする。現在は、ブラウザによって設定された単一のヘルパーのみをサポートする。
   "aggregation_service_payloads": [
     {
       "payload": "[base64-encoded HPKE encrypted data readable only by the aggregation service]",
@@ -275,7 +281,7 @@ The `payload` should be a [CBOR](https://cbor.io) map encrypted via [HPKE](https
 
 ペイロードは [CBOR](https://cbor.io) マップを [HPKE](https://datatracker.ietf.org/doc/draft-irtf-cfrg-hpke/) で暗号化し、base64 エンコードしたものです。このマップは以下のような構造をしています。
 
-```jsonc
+```js
 // CBOR
 {
   "operation": "histogram",  // Allows for the service to support other operations in the future
@@ -302,7 +308,7 @@ rfc7234#section-4.2)). The browser could enforce maximum/minimum lifetimes of st
 
 暗号化には、アグリゲーションサービスによって指定された公開鍵が使用されます。ブラウザは、レポートが送信される直前に、認証されていないリクエストで公開鍵のエンドポイントを取得することにより、ペイロードを暗号化します。つまり、Cache-Control ヘッダを使用して、鍵をどれくらいの期間保存するかを指定します(たとえば [freshness lifetime](https://datatracker.ietf.org/doc/html/rfc7234#section-4.2) に従います)。ブラウザは、保存される鍵の最大/最小寿命を強制することで、鍵のローテーションの 高速化を促進したり、帯域幅の使用を軽減したりすることができる。JSON 暗号化された公開鍵のスキームは以下のとおりである。
 
-```jsonc
+```js
 {
   "keys": [
     {
