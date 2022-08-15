@@ -159,9 +159,9 @@ The `aggregatable_trigger_data` field is a list of dict which generates aggregat
 
 `aggregatable_trigger_data` フィールドは、集約キーを生成する dict のリストである。
 
-The `aggregatable_values` field lists an amount of an abstract "value" to contribute to each key, which can be integers in [1, 2^16). These are attached to aggregation keys in the order they are generated. See the [contribution budgeting](#contribution-bounding-and-budgeting) section for more details on how to allocate these contribution values.]()
+The `aggregatable_values` field lists an amount of an abstract "value" to contribute to each key, which can be integers in `[1, 2^16)`. These are attached to aggregation keys in the order they are generated. See the [contribution budgeting](#contribution-bounding-and-budgeting) section for more details on how to allocate these contribution values.
 
-`集約可能な値`フィールドは、各キーに寄与する抽象的な「値」の量をリストアップします。これは [1, 2^16) の整数値です。これらは生成された順番に集約キーに付けられます。これらの貢献度の割り当て方法の詳細については、[貢献度予算](#contribution-bounding and-budgeting) のセクションを参照してください。]()
+`aggregatable_values` フィールドは、各キーに寄与する抽象的な "value" の量をリストアップします。これは `[1, 2^16)` の整数値です。これらは生成された順番に集約キーに付けられます。これらの貢献度の割り当て方法の詳細については、[contribution budgeting](#contribution-bounding and-budgeting) のセクションを参照してください。
 
 The scheme above will generate the following abstract histogram contributions:
 
@@ -188,7 +188,7 @@ Note: The `filters` field will still apply to aggregatable reports, and each dic
 
 Note: the above scheme was used to maximize the [contribution budget](#contribution-bounding-and-budgeting) and optimize utility in the face of constant noise. To rescale, simply inverse the scaling factors used above:
 
-注:上記のスキームは、[貢献予算](#contribution-bounding and-budgeting) を最大化し、一定のノイズに直面した場合の効用を最適化するために使用されたものです。再スケールするには、上記で使用したスケーリングファクターを単純に反転させる。
+注: 上記のスキームは、 [contribution budget](#contribution-bounding-and-budgeting) を最大化し、一定のノイズに直面した場合の効用を最適化するために使用されたものです。再スケールするには、上記で使用したスケーリングファクターを単純に反転させる。
 
 ```py
 L1 = 1 << 16;
@@ -252,20 +252,13 @@ Reports will not be delayed to the same extent as they are for event level repor
 イベントレベルのレポートと同じ程度には、レポートは遅延されません。ブラウザは、10 分から 1 時間の間のランダムな遅延、またはブラウザが次に起動した後の小さな遅延で、それらを遅らせます。最低 10 分の遅延は、後悔しているユーザーにレポートを削除する機会を与えることができます。ブラウザは、データ損失を最小限に抑えるために再試行などの技術を自由に利用することができます。
 
 - The `shared_info` will be a serialized JSON object. This exact string is used as authenticated data for decryption, see [below](#encrypted-payload). The string therefore must be forwarded to the aggregation service unmodified. The reporting origin can parse the string to access the encoded fields.
-
-- `shared_info`はシリアライズされた JSON オブジェクトになります。この正確な文字列は、復号化のための認証データとして使用されます([下記](#encrypted-payload)を参照)。したがって、この文字列は修正されないままアグリゲーションサービスに転送される必要があります。報告元は、文字列を解析して、エンコードされたフィールドにアクセスすることができます。
-
+  - `shared_info` はシリアライズされた JSON オブジェクトになります。この正確な文字列は、復号化のための認証データとして使用されます([下記](#encrypted-payload)を参照)。したがって、この文字列は修正されないままアグリゲーションサービスに転送される必要があります。報告元は、文字列を解析して、エンコードされたフィールドにアクセスすることができます。
 - The `api` field is a string enum identifying the API that triggered the report. This allows the aggregation service to extend support to other APIs in the future.
-
-- `api` フィールドは、レポートのトリガーとなった API を特定するための文字列列列挙型である。これにより、将来的にアグリゲーションサービスが他の API にサポートを拡張することができる。
-
+  - `api` フィールドは、レポートのトリガーとなった API を特定するための文字列列列挙型である。これにより、将来的にアグリゲーションサービスが他の API にサポートを拡張することができる。
 - The `scheduled_report_time` will be the number of seconds since the Unix Epoch (1970-01-01T00:00:00Z, ignoring leap seconds) to align with [DOMTimestamp](https://heycam.github.io/webidl/#DOMTimeStamp) until the browser initially scheduled the report to be sent (to avoid noise around offline devices reporting late).
-
-- `scheduled_report_time` は、ブラウザが最初にレポートを送信するようにスケジュールするまでの、Unix Epoch (1970-01-01T00:00:00Z, うるう秒は無視) から [DOMTimestamp](https://heycam.github.io/webidl/#DOMTimeStamp) に合わせた秒数です (オフラインデバイスからの遅いレポートによるノイズを回避するため).
-
+  - `scheduled_report_time` は、ブラウザが最初にレポートを送信するようにスケジュールするまでの、Unix Epoch (1970-01-01T00:00:00Z, うるう秒は無視) から [DOMTimestamp](https://heycam.github.io/webidl/#DOMTimeStamp) に合わせた秒数です (オフラインデバイスからの遅いレポートによるノイズを回避するため).
 - The `source_registration_time` will represent (in seconds since the Unix Epoch) the time the source event was registered, rounded down to a whole day.
-
-- `source_registration_time` はソースイベントが登録された時刻を (Unix Epoch からの秒数で) 表し、丸一日に切り捨てた値となります。
+  - `source_registration_time` はソースイベントが登録された時刻を (Unix Epoch からの秒数で) 表し、丸一日に切り捨てた値となります。
 
 - The `payload` will contain the actual histogram contributions. It should be be encrypted and then base64 encoded, see [below](#encrypted-payload).
 
