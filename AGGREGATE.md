@@ -49,7 +49,7 @@ Aggregatable attribution reports should support legitimate measurement use cases
 集計可能なアトリビューションレポートは、イベントレベルレポートで既にサポートされていない正当な測定ユースケースをサポートする必要があります。これには以下が含まれる。
 
 - Higher fidelity measurement of attribution-trigger (conversion-side) data, which is very limited in event-level attribution reports, including the ability to sum _values_ rather than just counts
-  - イベントレベルのアトリビューションレポートでは非常に限られている、アトリビューショントリガー(コンバージョン側)のデータをより忠実に測定し、カウントだけでなく\_値を合計することが可能です。
+  - イベントレベルのアトリビューションレポートでは非常に限られている、アトリビューショントリガー(コンバージョン側)のデータをより忠実に測定し、カウントだけでな"値"を合計することが可能です。
 - A system which enables the most robust privacy protections
   - 最も強固なプライバシー保護を可能にするシステム
 - Ability to receive aggregatable reports alongside event-level reports
@@ -61,7 +61,7 @@ Aggregatable attribution reports should support legitimate measurement use cases
 
 Note: fraud detection (enabling the filtration of reports you are not expecting) is a goal but it is left out of scope for this document for now.
 
-注: 不正検知(想定していないレポートのフィルタリングを可能にする)は目標ではあるが、今のところこのドキュメントの範囲外としている。
+Note: 不正検知(想定していないレポートのフィルタリングを可能にする)は目標ではあるが、今のところこのドキュメントの範囲外としている。
 
 ## API changes
 
@@ -184,11 +184,11 @@ The scheme above will generate the following abstract histogram contributions:
 
 Note: The `filters` field will still apply to aggregatable reports, and each dict in `aggregatable_trigger_data` can still optionally have filters applied to it just like for event-level reports.
 
-注意: `filters` フィールドは、集約可能なレポートにも適用されます。また、 `aggregatable_trigger_data` の各 dict には、イベントレベルのレポートと同様に、オプションでフィルタを適用することができます。
+Note: `filters` フィールドは、集約可能なレポートにも適用されます。また、 `aggregatable_trigger_data` の各 dict には、イベントレベルのレポートと同様に、オプションでフィルタを適用することができます。
 
 Note: the above scheme was used to maximize the [contribution budget](#contribution-bounding-and-budgeting) and optimize utility in the face of constant noise. To rescale, simply inverse the scaling factors used above:
 
-注: 上記のスキームは、 [contribution budget](#contribution-bounding-and-budgeting) を最大化し、一定のノイズに直面した場合の効用を最適化するために使用されたものです。再スケールするには、上記で使用したスケーリングファクターを単純に反転させる。
+Note: 上記のスキームは、 [contribution budget](#contribution-bounding-and-budgeting) を最大化し、一定のノイズに直面した場合の効用を最適化するために使用されたものです。再スケールするには、上記で使用したスケーリングファクターを単純に反転させる。
 
 ```py
 L1 = 1 << 16;
@@ -218,15 +218,15 @@ The report will be JSON encoded with the following scheme:
 {
   // Info that the aggregation services also need encoded in JSON for use with AEAD.
   // AEAD で使用するために、アグリゲーションサービスも JSON でエンコードする
-  "shared_info": "{
-    \"api\": \"attribution-reporting\",
-    \"attribution_destination\": \"https://advertiser.example\",
-    \"report_id\": \"[UUID]\",
-    \"reporting_origin\": \"https://reporter.example\",
-    \"scheduled_report_time\": \"[timestamp in seconds]\",
-    \"source_registration_time\": \"[timestamp in seconds]\",
-    \"version\": \"[api version]\"
-  }",
+  "shared_info": {
+    "api": "attribution-reporting",
+    "attribution_destination": "https://advertiser.example",
+    "report_id": "[UUID]",
+    "reporting_origin": "https://reporter.example",
+    "scheduled_report_time": "[timestamp in seconds]",
+    "source_registration_time": "[timestamp in seconds]",
+    "version": "[api version]"
+  },
 
   // Support a list of payloads for future extensibility if multiple helpers are necessary. Currently only supports a single helper configured by the browser.
   // 将来の拡張性のために複数のペイロードリストをサポートする。現在は、ブラウザによって設定された単一のヘルパーのみをサポートする。
@@ -258,6 +258,7 @@ Reports will not be delayed to the same extent as they are for event level repor
 - The `scheduled_report_time` will be the number of seconds since the Unix Epoch (1970-01-01T00:00:00Z, ignoring leap seconds) to align with [DOMTimestamp](https://heycam.github.io/webidl/#DOMTimeStamp) until the browser initially scheduled the report to be sent (to avoid noise around offline devices reporting late).
   - `scheduled_report_time` は、ブラウザが最初にレポートを送信するようにスケジュールするまでの、Unix Epoch (1970-01-01T00:00:00Z, うるう秒は無視) から [DOMTimestamp](https://heycam.github.io/webidl/#DOMTimeStamp) に合わせた秒数です (オフラインデバイスからの遅いレポートによるノイズを回避するため).
 - The `source_registration_time` will represent (in seconds since the Unix Epoch) the time the source event was registered, rounded down to a whole day.
+
   - `source_registration_time` はソースイベントが登録された時刻を (Unix Epoch からの秒数で) 表し、丸一日に切り捨てた値となります。
 
 - The `payload` will contain the actual histogram contributions. It should be be encrypted and then base64 encoded, see [below](#encrypted-payload).
@@ -293,13 +294,13 @@ This encryption should use [AEAD](https://en.wikipedia.org/wiki/Authenticated_en
 
 この暗号化には [AEAD](https://en.wikipedia.org/wiki/Authenticated_encryption) を使用し、`shared_info` の情報が改竄されないようにする必要があります。なぜなら、アグリゲーションサービスは適切なリプレイ保護を行うために、その情報を必要とするためです。認証されたデータは `shared_info` の文字列 (UTF-8 でエンコードされる) に、ドメイン分離のために一定のプレフィックスを付加したもので、公開鍵を共有していても異なるプロトコルで暗号文が再利用されないようにする。
 
-The encryption will use public keys specified by the aggregation service. The browser will encrypt payloads just before the report is sent by fetching the public key endpoint with an un-credentialed request. The processing origin will respond with a set of keys which will be stored according to standard HTTP caching rules, i.e. using Cache-Control headers to dictate how long to store the keys for (e.g. following the [freshness lifetime](https://datatracker.ietf.org/doc/html/)
+The encryption will use public keys specified by the aggregation service. The browser will encrypt payloads just before the report is sent by fetching the public key endpoint with an un-credentialed request. The processing origin will respond with a set of keys which will be stored according to standard HTTP caching rules, i.e. using Cache-Control headers to dictate how long to store the keys for (e.g. following the [freshness lifetime](https://datatracker.ietf.org/doc/html/rfc7234#section-4.2)).
 
-この暗号化には [AEAD](https://en.wikipedia.org/wiki/Authenticated_encryption) を使用し、`shared_info` の情報が改竄されないようにする必要があります。なぜなら、アグリゲーションサービスは適切なリプレイ保護を行うために、その情報を必要とするためです。認証されたデータは `shared_info` の文字列 (UTF-8 でエンコードされる) に、ドメイン分離のために一定のプレフィックスを付加したもので、公開鍵を共有していても異なるプロトコルで暗号文が再利用されないようにする。
+暗号化には、アグリゲーションサービスによって指定された公開鍵が使用されます。ブラウザは、レポートが送信される直前に、認証されていないリクエストで公開鍵のエンドポイントを取得することにより、ペイロードを暗号化します。つまり、Cache-Control ヘッダを使用して、鍵を保存する期間を指定します（たとえば、[freshness lifetime](https://datatracker.ietf.org/doc/html/rfc7234#section-4.2) に従って保存します）。
 
-rfc7234#section-4.2)). The browser could enforce maximum/minimum lifetimes of stored keys to encourage faster key rotation and/or mitigate bandwidth usage. The scheme of the JSON encoded public keys is as follows:
+The browser could enforce maximum/minimum lifetimes of stored keys to encourage faster key rotation and/or mitigate bandwidth usage. The scheme of the JSON encoded public keys is as follows:
 
-暗号化には、アグリゲーションサービスによって指定された公開鍵が使用されます。ブラウザは、レポートが送信される直前に、認証されていないリクエストで公開鍵のエンドポイントを取得することにより、ペイロードを暗号化します。つまり、Cache-Control ヘッダを使用して、鍵をどれくらいの期間保存するかを指定します(たとえば [freshness lifetime](https://datatracker.ietf.org/doc/html/rfc7234#section-4.2) に従います)。ブラウザは、保存される鍵の最大/最小寿命を強制することで、鍵のローテーションの 高速化を促進したり、帯域幅の使用を軽減したりすることができる。JSON 暗号化された公開鍵のスキームは以下のとおりである。
+ブラウザは、保存された鍵の最大/最小寿命を強制することで、鍵のローテーションの高速化を促進し、かつ/または帯域幅の使用量を軽減することができる。JSON 暗号化された公開鍵のスキームは以下のとおりである。
 
 ```js
 {
@@ -319,7 +320,7 @@ To limit the impact of a single compromised key, multiple keys (up to a small li
 
 **Note:** The browser may need some mechanism to ensure that the same set of keys are delivered to different users.
 
-**注:**ブラウザは、同じ鍵のセットが異なるユーザーに配信されることを保証するために、何らかのメカニズムが必要かもしれません。
+**Note:** ブラウザは、同じ鍵のセットが異なるユーザーに配信されることを保証するために、何らかのメカニズムが必要かもしれません。
 
 #### Optional: extended debugging reports
 
@@ -359,7 +360,7 @@ Strawman: There should be a limit of 1024 pending aggregatable reports per desti
 
 Note: The storage limits for event-level and aggregatable reports are enforced independently of each other.
 
-注:イベントレベルおよびアグリゲーションレポートの保存制限は、互いに独立して実施されます。
+Note: イベントレベルおよびアグリゲーションレポートの保存制限は、互いに独立して実施されます。
 
 ## Data processing through a Secure Aggregation Service
 
@@ -399,7 +400,7 @@ A goal of this work is to have a framework which can support differentially priv
 
 Note: there are a few caveats about a formal differential privacy claim:
 
-注:形式的な差分プライバシー要求については、いくつかの注意点があります。
+Note: 形式的な差分プライバシー要求については、いくつかの注意点があります。
 
 - In the current design, the number of encrypted reports is revealed to the reporting origin in the clear without any noise. See [Hide the true number of attribution reports](#Hide the-true-number-of-attribution-reports).
 
