@@ -118,8 +118,9 @@ Trigger registration will also add two new fields to the JSON dictionary of the 
 
     {
       // Conversion type purchase = 2 at a 9 bit offset, i.e. 2 << 9.
-      // Conversion type purchase ＝ 2，9 ビットオフセッつまり (2 << 9)
       // A 9 bit offset is needed because there are 511 possible campaigns, which will take up 9 bits in the resulting key.
+
+      // Conversion type purchase ＝ 2，9 ビットオフセッつまり (2 << 9)
       // キャンペーンは 511 種類あり、結果の鍵の 9 ビットを占有するため、 9 ビットのオフセットが必要である。
       "key_piece": "0x400",
       // Apply this key piece to:
@@ -128,8 +129,9 @@ Trigger registration will also add two new fields to the JSON dictionary of the 
     },
     {
       // Purchase category shirts = 21 at a 7 bit offset, i.e. 21 << 7.
-      // 購入カテゴリとして シャツ＝21 を 7 ビットオフセット (21 << 7)
       // A 7 bit offset is needed because there are ~100 regions for the geo key, which will take up 7 bits of space in the resulting key.
+
+      // 購入カテゴリとして シャツ＝21 を 7 ビットオフセット (21 << 7)
       // 7 ビットのオフセットが必要なのは、 geo キーには 100 近い地域があり、結果のキーに 7 ビットのスペースを取るため
       "key_piece": "0xA80",
       // Apply this key piece to:
@@ -138,10 +140,11 @@ Trigger registration will also add two new fields to the JSON dictionary of the 
   ],
   "aggregatable_values": {
     // Each source event can contribute a maximum of L1 = 2^16 to the aggregate histogram.
-    // 各ソースイベントは，最大で L1 = 2^16 まで aggregate histogram に寄与することができます．
     // In this example, use this whole budget on a single trigger, evenly allocating this "budget" across two measurements.
-    // この例では、バジェット全体を 1 つのトリガーに使用し、 2 つの測定にこの "budget" を均等に割り当てます。
     // Note that this will require rescaling when post-processing aggregates!
+
+    // 各ソースイベントは，最大で L1 = 2^16 まで aggregate histogram に寄与することができます．
+    // この例では、バジェット全体を 1 つのトリガーに使用し、 2 つの測定にこの "budget" を均等に割り当てます。
     // 集計の後処理で再スケーリングが必要になることに注意!
 
     // 1 count =  L1 / 2 = 2^15
@@ -161,7 +164,7 @@ The `aggregatable_trigger_data` field is a list of dict which generates aggregat
 
 The `aggregatable_values` field lists an amount of an abstract "value" to contribute to each key, which can be integers in `[1, 2^16)`. These are attached to aggregation keys in the order they are generated. See the [contribution budgeting](#contribution-bounding-and-budgeting) section for more details on how to allocate these contribution values.
 
-`aggregatable_values` フィールドは、各キーに寄与する抽象的な "value" の量をリストアップします。これは `[1, 2^16)` の整数値です。これらは生成された順番に集約キーに付けられます。これらの貢献度の割り当て方法の詳細については、[contribution budgeting](#contribution-bounding and-budgeting) のセクションを参照してください。
+`aggregatable_values` フィールドは、各キーに寄与する抽象的な "value" の量をリストアップします。これは `[1, 2^16)` の整数値です。これらは生成された順番に集約キーに付けられます。これらの貢献度の割り当て方法の詳細については、 [contribution budgeting](#contribution-bounding and-budgeting) のセクションを参照してください。
 
 The scheme above will generate the following abstract histogram contributions:
 
@@ -204,7 +207,7 @@ Note that aggregatable trigger registration is independent of event-level trigge
 
 Aggregatable reports will look very similar to event-level reports. They will be reported to the reporting origin at the path `.well-known/attribution-reporting/report-aggregate-attribution`.
 
-集計可能なレポートはイベントレベルのレポートと非常によく似ています。これらは、`.well-known/attribution-report/report-aggregate-attribution`というパスにあるレポート作成元に報告されます。
+集計可能なレポートはイベントレベルのレポートと非常によく似ています。これらは、`.well-known/attribution-report/report-aggregate-attribution` というパスにあるレポート作成元に報告されます。
 
 The report itself does not contain histogram contributions in the clear. Rather, the report embeds them in an _encrypted payload_ that can only be read by a trusted aggregation service known by the browser.
 
@@ -258,16 +261,13 @@ Reports will not be delayed to the same extent as they are for event level repor
 - The `scheduled_report_time` will be the number of seconds since the Unix Epoch (1970-01-01T00:00:00Z, ignoring leap seconds) to align with [DOMTimestamp](https://heycam.github.io/webidl/#DOMTimeStamp) until the browser initially scheduled the report to be sent (to avoid noise around offline devices reporting late).
   - `scheduled_report_time` は、ブラウザが最初にレポートを送信するようにスケジュールするまでの、Unix Epoch (1970-01-01T00:00:00Z, うるう秒は無視) から [DOMTimestamp](https://heycam.github.io/webidl/#DOMTimeStamp) に合わせた秒数です (オフラインデバイスからの遅いレポートによるノイズを回避するため).
 - The `source_registration_time` will represent (in seconds since the Unix Epoch) the time the source event was registered, rounded down to a whole day.
-
   - `source_registration_time` はソースイベントが登録された時刻を (Unix Epoch からの秒数で) 表し、丸一日に切り捨てた値となります。
-
 - The `payload` will contain the actual histogram contributions. It should be be encrypted and then base64 encoded, see [below](#encrypted-payload).
-
-- この `payload` には，実際のヒストグラムの投稿が含まれます．これは暗号化され，さらに base64 でエンコードされている必要があります．
+  - この `payload` には，実際のヒストグラムの投稿が含まれます．これは暗号化され，さらに base64 でエンコードされている必要があります．
 
 Optional debugging fields are discussed [below](#optional-extended-debugging-reports).
 
-オプションのデバッグフィールドについては、[後述](#optional-extended-debugging-reports)で説明します。
+オプションのデバッグフィールドについては、 [後述](#optional-extended-debugging-reports) で説明します。
 
 #### Encrypted payload
 
@@ -326,7 +326,7 @@ To limit the impact of a single compromised key, multiple keys (up to a small li
 
 If [debugging](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#optional-extended-debugging-reports) is enabled, additional debug fields will be present in aggregatable reports. The `source_debug_key` and `trigger_debug_key` fields match those in the event-level reports. If both the source and trigger debug keys are set, there will be a `debug_cleartext_payload` field included in the report. It will contain the base64-encoded cleartext of the encrypted payload to allow downstream systems to verify that reports are constructed correctly. If both debug keys are set, the `shared_info` will also include the flag `"debug_mode": "enabled"` to allow the aggregation service to support debugging functionality on these reports.
 
-[debugging](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#optional-extended-debugging-reports) が有効な場合、集約可能なレポートに追加のデバッグフィールドが表示されます。`source_debug_key`と`trigger_debug_key`フィールドはイベントレベルのレポートにあるものと同じです。ソースデバッグキーとトリガーデバッグキーの両方が設定されている場合、レポートに`debug_cleartext_payload` フィールドが含まれます。これは、レポートが正しく構築されていることを下流のシステムが検証できるように、暗号化されたペイロードの base64 エンコードされた平文が含まれます。両方のデバッグキーが設定されている場合、`shared_info`にはフラグ`"debug_mode":"enabled"`これは、アグリゲーションサービスがこれらのレポートのデバッグ機能をサポートできるようにするためである。
+[debugging](https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#optional-extended-debugging-reports) が有効な場合、集約可能なレポートに追加のデバッグフィールドが表示されます。`source_debug_key` と `trigger_debug_key` フィールドはイベントレベルのレポートにあるものと同じです。ソースデバッグキーとトリガーデバッグキーの両方が設定されている場合、レポートに `debug_cleartext_payload` フィールドが含まれます。これは、レポートが正しく構築されていることを下流のシステムが検証できるように、暗号化されたペイロードの base64 エンコードされた平文が含まれます。両方のデバッグキーが設定されている場合、 `shared_info` にはフラグ `"debug_mode":"enabled"` これは、アグリゲーションサービスがこれらのレポートのデバッグ機能をサポートできるようにするためである。
 
 Additionally, a duplicate debug report will be sent immediately (i.e. without the random delay) to a `.well-known/attribution-reporting/debug/report-aggregate-attribution` endpoint. The debug reports should be almost identical to the normal reports, including the additional debug fields. However, the `payload` ciphertext will differ due to repeating the encryption operation and the `key_id` may differ if the previous key had since expired or the browser randomly chose a different valid public key.
 
@@ -343,6 +343,8 @@ This bound is characterized by a single parameters: `L1`, the maximum sum of the
 この境界は一つのパラメータで特徴付けられる。 `L1` は、任意のソース・イベントに対するすべてのバケット間の寄与(値)の最大合計です。L1 とは、ソース・イベントごとのヒストグラム寄与の L1 感度/ノルムを指します。
 
 Exceeding these limits will cause future contributions to silently drop. While exposing failure in any kind of error interface can be used to leak sensitive information, we might be able to reveal aggregate failure results via some other monitoring side channel in the future.
+
+これらの制限を超えると、将来の貢献は静かに減少します。あらゆる種類のエラーインターフェイスで失敗を公開することは、機密情報の漏洩に使われる可能性がありますが、将来的には他の監視サイドチャンネルを通じて、失敗の集計結果を明らかにすることができるようになるかもしれません。
 
 For the initial proposal, set `L1 = 65536`. Note that for privacy, this parameter can be arbitrary, as noise in the aggregation service will be scaled in proportion to this parameter. In the example above, the budget is split equally between two keys, one for the number of conversions per campaign and the other representing the conversion dollar value per geography. This budgeting mechanism is highly flexible and can support many different aggregation strategies as long as the appropriate scaling is performed on the outputs.
 
